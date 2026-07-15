@@ -5,10 +5,10 @@ Created         Tue Jul 14 21:30:07 2026
 Name            800XL MMU
 Partno          CO61618
 Revision        00
-Date            02/25/99
-Designer        Bob Woolley
-Company         Atari Rulz!!
-Assembly        1200XL
+Date            14/7/26
+Designer        Veljko Batinic
+Company         VexAtari
+Assembly        800XL
 Location        U14
 *QP24 
 *QF5828 
