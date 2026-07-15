@@ -1,0 +1,66 @@
+Name       800XL MMU;
+Partno     CO61618;
+Date       15/7/25;
+Revision   00;
+Designer   Veljko Batinic;
+Company    VexAtari;
+Assembly   800XL;
+Location   U14;
+Device     GAL22V10;
+
+/******************************************************************/
+/*    Stock Atari XL/XE MMU                                       */
+/*                                                                */
+/*                                                                */
+/******************************************************************/
+/*  Allowable Target Device Types: 22L10                           */
+/******************************************************************/
+
+/**  Inputs  **/
+
+Pin  01      = A11          ; /* address bit 11            */
+Pin  02      = A12          ; /* address bit 12            */
+Pin  03      = A13          ; /* address bit 13            */
+Pin  04      = A14          ; /* address bit 14            */
+Pin  05      = A15          ; /* address bit 15            */
+Pin  06      = MAP          ; /* PB7 diagnostic bit        */
+Pin  07      = RD4          ; /* right cart. @ $8000-$9FFF */
+Pin  08      = RD5          ; /* left cart. @ $A000-$BFFF  */
+Pin  09      = REN          ; /* PB0 OS ram enable         */
+Pin  15      = REF          ; /* DRAM refresh              */
+Pin  18      = MPD          ; /* Math Pack Disable         */
+Pin  22      = BE           ; /* Basic Enable              */
+
+
+/**  Outputs  **/
+
+Pin  16      = !S5       ; /* left cart. select         */
+Pin  17      = !BASIC    ; /* Basic ROM select          */
+Pin  19      = !OS       ; /* OS code select            */
+Pin  20      = !CI       ; /* DRAM CAS inhibit          */
+Pin  21      = !IO       ; /* I/O select @ $D000-$D7FF  */
+Pin  23      = !S4       ; /* right cart. select        */
+
+
+/**  Logic Equations  **/
+/**  # is or **/
+/**  ! is not **/
+
+S4      = !A13 & !A14 & A15 & RD4 & REF;/* RD4 and addresses $8000-$9FFF */
+S5      = A13 & !A14 & A15 & RD5 & REF;	/* RD5 and addresses $A000-$BFFF */
+
+IO      = A12 & !A11 & !A13 & A14 & A15 & REF;   /* addresses $D000-$D7FF*/
+
+CI      = !A13 & !A14 & A15 & RD4 & REF		/* right cart. */
+        # A13 & !A14 & A15 & RD5 & REF		/* left cart. */
+        # A13 & !BE & !A14 & A15 & !RD5 & REF	/* BE and $A000-$BFFF */
+        # OS					/* OS addresses */
+        # A12 & !A11 & !A13 & A14 & A15 & REF	/* I/O addresses */
+        # !REF;					/* memory refresh */
+
+OS      = A13 & A14 & A15 & REN & REF		/* addresses $E000-$FFFF */
+        # !A12 & !A13 & A14 & A15 & REN & REF   /* addresses $C000-$CFFF */
+        # A12 & A11 & !A13 & A14 & A15 & MPD & REN & REF /* addresses $D800-$DFFF */
+        # A12 & !A11 & !A13 & A14 & !A15 & !MAP & REN & REF; /* addresses $5000-$5800 - mapped */
+
+BASIC   = A13 & !BE & !A14 & A15 & !RD5 & REF;   /* BE and $A000-$BFFF */
